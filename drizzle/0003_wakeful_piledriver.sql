@@ -1,0 +1,1 @@
+CREATE INDEX `ai_usage_created_at_idx` ON `ai_usage` (`created_at`);

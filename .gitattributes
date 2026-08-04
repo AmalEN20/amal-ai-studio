@@ -1,0 +1,2 @@
+# Wrangler 4.111.0 emits a few trailing spaces in its generated declarations.
+worker-configuration.d.ts -whitespace
