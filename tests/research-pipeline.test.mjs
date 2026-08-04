@@ -61,6 +61,25 @@ test("unsupported website functionality is rejected before PageSpeed or AI", asy
   assert.match(engine, /Direct web, marketing, branding, or software competitor detected/);
 });
 
+test("deep lead audits preserve mobile PageSpeed intelligence", async () => {
+  const [engine, action, detail] = await Promise.all([
+    source("lib/lead-engine.ts"),
+    source("app/api/leads/action/route.ts"),
+    source("app/components/LeadDetail.tsx"),
+  ]);
+
+  assert.match(engine, /pagespeedonline\/v5\/runPagespeed/);
+  assert.match(engine, /searchParams\.set\("strategy", "mobile"\)/);
+  assert.match(engine, /\["performance", "accessibility", "seo"\]/);
+  assert.match(engine, /performance:\s*score\(categories\?\.performance\?\.score\)/);
+  assert.match(engine, /accessibility:\s*score\(categories\?\.accessibility\?\.score\)/);
+  assert.match(engine, /seo:\s*score\(categories\?\.seo\?\.score\)/);
+  assert.match(action, /payload\.action === "analyze"[\s\S]*analyzeLead\(lead\)/);
+  assert.match(detail, /Mobile performance/);
+  assert.match(detail, /Accessibility/);
+  assert.match(detail, /SEO/);
+});
+
 test("research jobs and lead membership are persisted with resumable progress", async () => {
   const [schema, jobs, jobsRoute, stepRoute] = await Promise.all([
     source("db/schema.ts"),
